@@ -1,3 +1,15 @@
 [submodule "modules/lodash"]
 	path = modules/lodash
 	url = git://github.com/bestiejs/lodash.git
+[submodule "modules/foliage"]
+	path = modules/foliage
+	url = git://github.com/herbalism/foliage.git
+[submodule "modules/phloem"]
+	path = modules/phloem
+	url = git://github.com/herbalism/phloem.git
+[submodule "modules/when"]
+	path = modules/when
+	url = git://github.com/cujojs/when.git
+[submodule "modules/curl"]
+	path = modules/curl
+	url = git://github.com/cujojs/curl.git
