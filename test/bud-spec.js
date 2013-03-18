@@ -4,7 +4,6 @@ define(['buster',
         'phloem',
         'jquery'], 
        function(buster, b, f, phloem, $) {
-
     function withContext(callback) {
         return function() {
             callback($('<div />'));
