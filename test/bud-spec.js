@@ -54,8 +54,14 @@ define(['buster',
             stream.push("pushed value");
             
             assert.equals($(ctx, "p").text().trim(), "pushed value");
+        }),
+        "keeps only last pushed value" : withContext(function(ctx){
+            var stream = phloem.stream();
+            stream.push("first value");
+            f.div(b.bind(stream.read, f.p))(ctx);
+            assert.equals($(ctx, "p").text().trim(), "first value");
+            stream.push("second value");
+            assert.equals($(ctx, "p").text().trim(), "second value");
         })
-
     });
-
 });
