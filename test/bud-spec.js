@@ -1,8 +1,9 @@
 define(['buster', 
         'bud', 
         'foliage',
+        'phloem',
         'jquery'], 
-       function(buster, b, f, $) {
+       function(buster, b, f, phloem, $) {
 
     function withContext(callback) {
         return function() {
@@ -39,4 +40,28 @@ define(['buster',
 
     });
 
+
+    buster.testCase("bind", {
+        "no value no element" : withContext(function(ctx){
+            var stream = phloem.stream();
+            f.div(b.bind(stream, f.p))(ctx);
+            
+            assert.equals($(ctx, "p").text().trim(), "");
+        }),
+        "creates element from pushed value" : withContext(function(ctx){
+            var stream = phloem.stream();
+            f.div(b.bind(stream.read, f.p))(ctx);
+            stream.push("pushed value");
+            
+            assert.equals($(ctx, "p").text().trim(), "pushed value");
+        }),
+        "keeps only last pushed value" : withContext(function(ctx){
+            var stream = phloem.stream();
+            stream.push("first value");
+            f.div(b.bind(stream.read, f.p))(ctx);
+            assert.equals($(ctx, "p").text().trim(), "first value");
+            stream.push("second value");
+            assert.equals($(ctx, "p").text().trim(), "second value");
+        })
+    });
 });
