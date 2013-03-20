@@ -1,9 +1,10 @@
 define(['buster', 
         'bud', 
         'foliage',
+        'foliage/foliage-event',
         'phloem',
         'jquery'], 
-       function(buster, b, f, phloem, $) {
+       function(buster, b, f, on, phloem, $) {
     function withContext(callback) {
         return function() {
             callback($('<div />'));
@@ -39,7 +40,6 @@ define(['buster',
 
     });
 
-
     buster.testCase("bind", {
         "no value no element" : withContext(function(ctx){
             var stream = phloem.stream();
@@ -61,6 +61,22 @@ define(['buster',
             assert.equals($(ctx, "p").text().trim(), "first value");
             stream.push("second value");
             assert.equals($(ctx, "p").text().trim(), "second value");
+        })
+    });
+
+    buster.testCase("bus", {
+        "can expose value": withContext(function(ctx) {
+            b.bus(function(bus) {
+                return f.all(
+                    f.input("#source", {value: "from source"}, bus.expose),
+                    f.input("#target", {value: "unchanged"}, bus.expose,
+                        on.click(function() {
+                            bus.target(bus.source());
+                        })));
+            })(ctx);
+            assert.equals($('#target', ctx).val().trim(), "unchanged");
+            $("#target", ctx).click();
+            assert.equals($('#target', ctx).val().trim(), "from source");
         })
     });
 });

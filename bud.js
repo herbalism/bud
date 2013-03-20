@@ -1,4 +1,4 @@
-define(['phloem'], function(phloem) {
+define(['phloem', 'foliage', 'jquery'], function(phloem, f, $) {
     return {
         scope: function(s) {
             return s();
@@ -11,6 +11,14 @@ define(['phloem'], function(phloem) {
                     last = element(value)(parent);
                 });
             }
+        },
+        bus: function(fn) {
+            var bus = {};
+            bus.expose = function(element) {
+                var jqelem = $(element);
+                bus[jqelem.attr('id')] = function(v){return  v ? jqelem.val(v) : jqelem.val()};
+            };
+            return f.all(fn(bus));
         }
     }
 });
