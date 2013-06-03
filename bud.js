@@ -17,7 +17,9 @@ define(['phloem', 'foliage', 'jquery'], function(phloem, f, $) {
       var bus = {};
       bus.expose = function(element) {
         var jqelem = $(element);
-        bus[jqelem.attr('id')] = function(v){return  v ? jqelem.val(v) : jqelem.val()};
+        var id = jqelem.attr('id');
+        bus [id] = function(v){return  v ? jqelem.val(v) : jqelem.val()};
+        bus [id].element = jqelem;
       };
       return f.all(fn(bus));
     },
