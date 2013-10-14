@@ -1,0 +1,26 @@
+{
+  "name": "bud",
+  "version": "0.0.0",
+  "description": "Dynamic injections in foliage UI's",
+  "main": "bud.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/herbalism/bud.git"
+  },
+  "author": "johlrogge",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/herbalism/bud/issues"
+  },
+  "devDepenecies": {
+    "buster": "~0.7.6",
+    "buster-test": "~0.7.3",
+    "buster-assertions": "~0.10.4"
+  },
+}
