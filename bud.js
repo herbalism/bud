@@ -138,7 +138,9 @@ define(['phloem', 'foliage', 'jquery', 'when'], function(phloem, f, $, when) {
             bus.expose = function(element) {
                 var jqelem = $(element);
                 var id = jqelem.attr('id');
-                bus [id] = function(v){return  v ? jqelem.val(v) : jqelem.val()};
+                bus [id] = function(v) {
+		    return (typeof v === "undefined") ? jqelem.val() : jqelem.val(v);
+		};
                 bus [id].element = jqelem;
             };
             return f.all(fn(bus));

@@ -79,6 +79,18 @@ define(['buster',
                    assert.equals($('#target', ctx).val().trim(), "unchanged");
                    $("#target", ctx).click();
                    assert.equals($('#target', ctx).val().trim(), "from source");
+               }),
+               "can set falsey value like empty string": withContext(function(ctx) {
+                   b.bus(function(bus) {
+                       return f.all(
+                           f.input("#target", {value: "unchanged"}, bus.expose,
+                                   on.click(function() {
+                                       bus.target("");
+                                   })));
+                   })(ctx);
+                   assert.equals($('#target', ctx).val().trim(), "unchanged");
+                   $("#target", ctx).click();
+                   assert.equals($('#target', ctx).val().trim(), "");
                })
            });
 
