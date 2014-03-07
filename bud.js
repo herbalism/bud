@@ -61,17 +61,22 @@ define(['phloem', 'foliage', 'jquery', 'when'], function(phloem, f, $, when) {
 	}
     };
 
-    function bind (stream , element) {
+    function bind (stream, elementFactory) {
         return function(parent) {
             var last = {undo: function(){}};
             phloem.each(stream, function(value) {
                 last.undo();
-                last = element(value)(parent);
+                last = elementFactory(value)(parent);
             });
+            return {
+                undo: function() {
+                    return last.undo();
+                }
+            };
         }
     }
 
-    var res = {
+    var res = {
 	create: function(item) {
 	    var itemToShow = f.create(item);
 	    return function(data) {
