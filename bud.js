@@ -9,7 +9,6 @@ define(['phloem', 'foliage', 'jquery', 'when'], function(phloem, f, $, when) {
     }
 
     var iterate = function(iterator) {
-
 	return {
 	    onEach:function(ui) {
 		return function(parent) {
@@ -18,7 +17,6 @@ define(['phloem', 'foliage', 'jquery', 'when'], function(phloem, f, $, when) {
 		    return undo;
 		}
 	    }
-
 	}
     }
 
@@ -76,7 +74,7 @@ define(['phloem', 'foliage', 'jquery', 'when'], function(phloem, f, $, when) {
         }
     }
 
-    var res = {
+    var res = {
 	create: function(item) {
 	    var itemToShow = f.create(item);
 	    return function(data) {
