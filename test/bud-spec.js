@@ -7,9 +7,13 @@ define(['buster',
         'when',
         'when/delay'], 
        function(buster, b, f, on, phloem, $, when, delay) {
+           function yield(value) {
+               return delay(1, value);
+           };
+
            function withContext(callback) {
                return function() {
-                   callback($('<div />'));
+                   return callback($('<div />'));
                };
            }
            
@@ -45,24 +49,36 @@ define(['buster',
            buster.testCase("bind", {
                "no value no element" : withContext(function(ctx){
                    var stream = phloem.stream();
-                   f.div(b.bind(stream, f.p))(ctx);
-                   
+                   var next = stream.read.next();
+                   f.div(b.bind(next, f.p))(ctx);
                    assert.equals($(ctx, "p").text().trim(), "");
                }),
                "creates element from pushed value" : withContext(function(ctx){
                    var stream = phloem.stream();
-                   f.div(b.bind(stream.read, f.p))(ctx);
+                   var next = stream.read.next();
+                   f.div(b.bind(next, f.p))(ctx);
+
                    stream.push("pushed value");
-                   
-                   assert.equals($(ctx, "p").text().trim(), "pushed value");
+                   return when(next).then(function(value){
+                       assert.equals($(ctx, "p").text().trim(), "pushed value");
+                   });
                }),
                "keeps only last pushed value" : withContext(function(ctx){
                    var stream = phloem.stream();
+                   var next = stream.read.next();
+                   f.div(b.bind(next, f.p))(ctx);
                    stream.push("first value");
-                   f.div(b.bind(stream.read, f.p))(ctx);
-                   assert.equals($(ctx, "p").text().trim(), "first value");
-                   stream.push("second value");
-                   assert.equals($(ctx, "p").text().trim(), "second value");
+                   return when(next).then(function(value){
+                       var paraText = $(ctx, "p").text().trim();
+                       assert.equals(paraText, "first value");
+                       stream.push("second value");
+                       return delay(1, phloem.next(value));
+                   }).then(
+                       function(value) {
+                           var paraText = $(ctx, "p").text().trim();
+                           assert.equals(paraText, "second value")
+                       }
+                   );
                })
            });
 
@@ -244,10 +260,11 @@ define(['buster',
                "snapshot is displayed": function() {
 	           var setUp = setUpAggregate();
 	           var promise = when(setUp.eventStream.read.next()).
-		       then(function(value) {
+		       then(yield).
+                       then(function(value) {
 		           assert.equals($('#item1', setUp.context).text().trim(), "item1 value");
 		           assert.equals($('#item2', setUp.context).text().trim(), "item2 value");
-		       })
+                       });
 
 	           setUp.eventStream.snap(["item1", "item2"]);
 	           return promise;            
@@ -256,6 +273,7 @@ define(['buster',
 	           var setUp = setUpAggregate();
 	           var promise = when(setUp.eventStream.read.next()).
                        then(phloem.next).
+                       then(yield).
 		       then(function(value) {
                            refute.equals($('#item0', setUp.context).text().trim(), "item0 value");
 		           assert.equals($('#item1', setUp.context).text().trim(), "item1 value");
@@ -270,6 +288,7 @@ define(['buster',
 	           var setUp = setUpAggregate();
 	           var promise = when(setUp.eventStream.read.next()).
 		       then(phloem.next).
+                       then(yield).
 		       then(function(value) {
 		           assert.equals($('#item1', setUp.context).text().trim(), "item1 value");
 		           assert.equals($('#item2', setUp.context).text().trim(), "item2 value");
@@ -283,11 +302,20 @@ define(['buster',
 	       "added element can be undone" : function() {
 	           var setUp = setUpAggregate();
 	           var promise =  when(setUp.eventStream.read.next()).
+                       then(function(value){
+                           console.log("value0", 0);
+                           return value;
+                       }).
 		       then(function(value) {
+                           console.log("value1 ", value);
 		           assert.equals($('#item1', setUp.context).text().trim(), "item1 value");
 		           setUp.aggregate.undo();
+                           return value;}).
+                       then(yield).
+                       then(function(value){
+                           console.log("value2 ", value);
 		           assert.equals($('#item1', setUp.context).text().trim(), "");
-		       })
+		       });
 	           setUp.eventStream.push("item1");
 	           return promise;
 	       },

@@ -4,6 +4,14 @@ curl({
 	'curl/plugin': 'modules/curl/src/curl/plugin'
     },
     packages : {
+        q: {
+            path: 'modules/when',
+            main: 'when'
+        },
+        cons: {
+            path: 'node_modules/consjs',
+            main: 'cons'
+        },
 	when: {
 	    path: 'modules/when',
 	    main: 'when'
