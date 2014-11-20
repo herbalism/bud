@@ -1,5 +1,5 @@
 (function (){
-    function specs(spec, b, f, on, dom, consjs, when) {
+    function specs(spec, b, f, on, dom, consjs, consfn, when) {
         function yield(value) {
             return delay(1, value);
         };
@@ -25,12 +25,11 @@
             })
         });
 
-        spec("bind", {
-            "no value no element" : withContext(function(ctx){
-                var stream = phloem.stream();
-                var next = stream.read.next();
-                f.div(b.bind(next, f.p))(ctx);
-                assert.equals($(ctx, "p").text().trim(), "");
+        var bind = spec("bind", {
+            "no value no initial" : withContext(function(ctx){
+                var stream = consfn.forArray([]);
+                var result = f.div(b.bind(stream, f.p, "initial"))(ctx);
+                assert.equals(ctx.text(ctx.find(result, "div p")).trim(), "initial");
             }),
             "creates element from pushed value" : withContext(function(ctx){
                 var stream = phloem.stream();
@@ -227,7 +226,7 @@
 	    }
         });
 
-        return [scope];
+        return [scope, bind];
 
     }
     if (typeof define !== 'undefined') {
@@ -237,6 +236,7 @@
                 'foliage/foliage-event',
                 'foliage/foliage-dom',
                 'consjs',
+                'consjs/fn',
                 'q'], specs);
     } else if (typeof module !== 'undefined' && module.exports) {
         module.exports = specs(
@@ -246,6 +246,7 @@
             require('foliage/foliage-event'), 
             require('foliage/foliage-dom'), 
             require('consjs'),
+            require('consjs/fn'),
             require('q'));
     }
 })()

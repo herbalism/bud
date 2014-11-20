@@ -1,5 +1,5 @@
 (function(){
-    function bud(phloem, f, when) {
+    function bud(phloem, fn, f, when) {
         function doNext(iter, ui, parent, undo) {
 	    return when(iter).then(function(model) {
 	        var last = ui(phloem.value(model))(parent);
@@ -60,18 +60,11 @@
 	    }
         };
 
-        function bind (stream, elementFactory) {
+        function bind (stream, elementFactory, initial) {
             return function(parent) {
-                var last = {undo: function(){}};
-                phloem.each(stream, function(value) {
-                    last.undo();
-                    last = elementFactory(value)(parent);
-                });
-                return {
-                    undo: function() {
-                        return last.undo();
-                    }
-                };
+                var update = parent.__dynamic(elementFactory, initial);
+                fn.each(stream, update);
+                return update;
             }
         }
 
@@ -178,12 +171,13 @@
     }
     if (typeof define !== 'undefined') {
         define(['consjs', 
+                'consjs/fn',
                 'foliage',
-                'consjs',
                 'q'], bud);
     } else if (typeof module !== 'undefined' && module.exports) {
         module.exports = bud(
             require('consjs'), 
+            require('consjs/fn'),
             require('foliage/foliage'), 
             require('q'));
     }
