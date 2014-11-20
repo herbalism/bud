@@ -6,9 +6,6 @@
   "directories": {
     "test": "test"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/herbalism/bud.git"
@@ -19,11 +16,15 @@
     "url": "https://github.com/herbalism/bud/issues"
   },
   "dependencies": {
-    "consjs":"0.0.*"
+    "consjs": "0.0.*",
+    "foliage": "0.0.*",
+    "q": "^1.1.1",
+    "tattler": "0.0.3"
   },
   "devDepenecies": {
-    "buster": "~0.7.6",
-    "buster-test": "~0.7.3",
-    "buster-assertions": "~0.10.4"
+    "tattler": "0.0.3"
+  },
+  "scripts": {
+    "test": "node test/run.js"
   }
 }
