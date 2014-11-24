@@ -1,5 +1,5 @@
 (function (){
-    function specs(spec, b, f, on, dom, consjs, consfn, when) {
+    function specs(spec, b, f, on, dom, consjs, consfn, when, _) {
         function yield(value) {
             return delay(1, value);
         };
@@ -32,31 +32,33 @@
                 assert.equals(ctx.text(ctx.find(result, "div p")).trim(), "initial");
             }),
             "creates element from pushed value" : withContext(function(ctx){
-                var stream = phloem.stream();
-                var next = stream.read.next();
-                f.div(b.bind(next, f.p))(ctx);
+                var stream = consfn.forArray(['first value']);
+                var result = f.div(b.bind(stream, f.p, "initial"))(ctx);
 
-                stream.push("pushed value");
-                return when(next).then(function(value){
-                    assert.equals($(ctx, "p").text().trim(), "pushed value");
+                return when(stream.next()).then(function(value){
+                    assert.equals(
+                        ctx.text(ctx.find(result, "div p")).trim(),
+                        "pushed value");
                 });
             }),
             "keeps only last pushed value" : withContext(function(ctx){
-                var stream = phloem.stream();
+                var stream = consjs.stream();
+                var result = f.div(b.bind(stream.read, f.p))(ctx);
                 var next = stream.read.next();
-                f.div(b.bind(next, f.p))(ctx);
-                stream.push("first value");
+                stream.push('first');
                 return when(next).then(function(value){
-                    var paraText = $(ctx, "p").text().trim();
-                    assert.equals(paraText, "first value");
-                    stream.push("second value");
-                    return delay(1, phloem.next(value));
+                    var paraText = ctx.text(ctx.find(result, "div p")).trim();
+                    return assert.equals(paraText, "first").
+                        then(function(){ stream.push("second");}).
+                        then(function(){return consjs.next(value)});
                 }).then(
                     function(value) {
-                        var paraText = $(ctx, "p").text().trim();
-                        assert.equals(paraText, "second value")
+                        var paraText = ctx.text(ctx.find(result, "div p")).trim();
+                        return assert.equals(paraText, "second")
                     }
                 );
+
+                
             })
         });
 
@@ -237,7 +239,8 @@
                 'foliage/foliage-dom',
                 'consjs',
                 'consjs/fn',
-                'q'], specs);
+                'q',
+                'lodash'], specs);
     } else if (typeof module !== 'undefined' && module.exports) {
         module.exports = specs(
             require('tattler/js/tattler-spec'), 
@@ -247,6 +250,7 @@
             require('foliage/foliage-dom'), 
             require('consjs'),
             require('consjs/fn'),
-            require('q'));
+            require('q'),
+            require('lodash'));
     }
 })()
