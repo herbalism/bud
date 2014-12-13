@@ -10,9 +10,12 @@
         }
 
         function bind (stream, elementFactory, initial) {
-            return function(parent) {
-                var update = parent.__dynamic(elementFactory, initial);
-                fn.each(stream, update);
+            return function(dom) {
+                var update = dom.__dynamic(elementFactory, initial);
+                fn.each(stream,
+                        function(value){
+                            update.__next(value);
+                        });
                 return update;
             }
         }
