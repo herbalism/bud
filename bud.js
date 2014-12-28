@@ -11,7 +11,7 @@
 
         function bind (stream, elementFactory, initial) {
             return function(dom) {
-                var update = dom.__dynamic(elementFactory, initial);
+                var update = dom.dynamic(elementFactory, initial);
                 fn.each(stream,
                         function(value){
                             update.__next(value);
